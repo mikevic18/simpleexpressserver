@@ -1,9 +1,9 @@
-require("dotenv").config()
+require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const port = process.env.PORT;
-const {fruits} = require("./fruits.js");
-
+const { fruits } = require("./fruits.js");
 
 const getFruit = (fruitName) => {
     return fruits.find((fruit) => fruit.name.toLowerCase() == fruitName);
@@ -13,16 +13,16 @@ const getMaxId = () => {
     const ids = fruits.map((fruit) => fruit.id);
     return Math.max(...ids);
 };
-
+app.use(cors);
 app.use(express.json());
-app.delete("/fruits/:name",(req,res)=> {
-    const name = req.params.name.toLowerCase()
-    const fruit = getFruit(name)
-    const fruitIndex = fruits.indexOf(fruit)
-    if(fruitIndex == -1) return res.status(404).send()
-    fruits.splice(fruitIndex, 1)
-    res.status(204).send()
-})
+app.delete("/fruits/:name", (req, res) => {
+    const name = req.params.name.toLowerCase();
+    const fruit = getFruit(name);
+    const fruitIndex = fruits.indexOf(fruit);
+    if (fruitIndex == -1) return res.status(404).send();
+    fruits.splice(fruitIndex, 1);
+    res.status(204).send();
+});
 app.get("/", (req, resp) => {
     resp.send("Hello World!");
 });
@@ -41,12 +41,12 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
 app.post("/fruits", (req, resp) => {
-    if(getFruit(req.body.name) != undefined) {
+    if (getFruit(req.body.name) != undefined) {
         resp.status(409).send();
         return;
-    } 
+    }
     let maxId = getMaxId() + 1;
     req.body.id = maxId;
-    fruits.push(req.body)
+    fruits.push(req.body);
     resp.status(201).send(req.body);
 });
